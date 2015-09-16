@@ -1,0 +1,8 @@
+.git
+.dockerignore
+.gitignore
+codeship.aes
+Dockerfile
+codeship-steps.yml
+codeship-services.yml
+keyconfig.env

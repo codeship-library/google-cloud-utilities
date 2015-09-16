@@ -1,0 +1,2 @@
+- service: googlecloud
+  command: ./authenticate_and_run.sh

@@ -1,0 +1,3 @@
+googlecloud:
+  build: .
+  encrypted_env_file: keyconfig.env.encrypted
