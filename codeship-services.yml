@@ -1,3 +1,14 @@
 googlecloud:
-  build: .
+  build:
+    image: codeship/google-deployment
+    dockerfile: Dockerfile
+integrationtest:
+  build:
+    image: codeship/google-deployment-integrationtest
+    dockerfile_path: Dockerfile.integrationtest
   encrypted_env_file: keyconfig.env.encrypted
+  add_docker: true
+deployexample:
+  build:
+    dockerfile_path: Dockerfile.example
+    image: codeship/google-deployment-example

@@ -1,2 +1,6 @@
 - service: googlecloud
+  command: true
+- service: deployexample
+  command: true
+- service: integrationtest
   command: ./authenticate_and_run.sh

@@ -1,0 +1,5 @@
+FROM codeship/google-deployment
+
+WORKDIR /app
+
+COPY authenticate_and_run.sh ./
