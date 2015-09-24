@@ -4,7 +4,7 @@ FROM debian:jessie
 # If there are upstrem changes copy them here
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update && apt-get install -y -qq --no-install-recommends wget unzip python php5-mysql php5-cli php5-cgi openjdk-7-jre-headless openssh-client python-openssl && apt-get clean
+RUN apt-get update && apt-get install -y -qq --no-install-recommends wget unzip python php5-mysql php5-cli php5-cgi openjdk-7-jre-headless openssh-client python-openssl curl && apt-get clean
 
 RUN wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.zip && unzip google-cloud-sdk.zip && rm google-cloud-sdk.zip
 ENV CLOUDSDK_PYTHON_SITEPACKAGES 1
@@ -20,6 +20,4 @@ ENV HOME /
 
 RUN gcloud components update kubectl
 
-RUN echo "deb http://http.debian.net/debian jessie-backports main" > /etc/apt/sources.list.d/docker.list
-
-RUN apt-get update && apt-get install -y -qq docker.io
+RUN curl -sSL https://get.docker.com/ | sh
