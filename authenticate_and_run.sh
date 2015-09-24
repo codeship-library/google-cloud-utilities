@@ -16,7 +16,14 @@ gcloud auth activate-service-account $GOOGLE_AUTH_EMAIL --key-file ./keyconfig.j
 echo "Setting default timezone $DEFAULT_ZONE"
 gcloud config set compute/zone $DEFAULT_ZONE
 
-echo "$DOCKER_HOST"
+echo "Docker Environment Variables:"
+env | grep DOCKER
+
+echo "Print installed Docker Client Version"
+docker --version
+
+echo "Print Docker version of client and server"
+docker version
 
 echo "Docker Images"
 docker images
