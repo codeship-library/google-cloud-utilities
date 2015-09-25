@@ -8,9 +8,7 @@ BUCKET_NAME=gs://codeship-production-testbucket
 UPLOAD_FILE_NAME=$BUCKET_NAME/datefile
 DEFAULT_ZONE=us-central1-a
 
-# Writing environment variable to Keyfile so it can be loaded later on
-echo $GOOGLE_KEY > keyconfig.json
-gcloud auth activate-service-account $GOOGLE_AUTH_EMAIL --key-file ./keyconfig.json --project $GOOGLE_PROJECT_NAME
+authenticate_with_google
 
 # Set the default zone to use
 echo "Setting default timezone $DEFAULT_ZONE"

@@ -6,9 +6,11 @@ integrationtest:
   build:
     image: codeship/google-deployment-integrationtest
     dockerfile_path: Dockerfile.integrationtest
-  encrypted_env_file: keyconfig.env.encrypted
+    path: test
+  encrypted_env_file: test/keyconfig.env.encrypted
   add_docker: true
 deployexample:
   build:
+    path: test
     dockerfile_path: Dockerfile.example
     image: codeship/google-deployment-example
