@@ -8,7 +8,7 @@ BUCKET_NAME=gs://codeship-production-testbucket
 UPLOAD_FILE_NAME=$BUCKET_NAME/datefile
 DEFAULT_ZONE=us-central1-a
 
-authenticate_with_google
+codeship_google authenticate
 
 # Set the default zone to use
 echo "Setting default timezone $DEFAULT_ZONE"

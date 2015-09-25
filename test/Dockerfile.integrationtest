@@ -1,5 +1,5 @@
-FROM codeship/google-deployment
+FROM codeship/google-cloud-deployment
 
 WORKDIR /app
 
-COPY authenticate_and_run.sh ./
+COPY deploy_to_google.sh ./

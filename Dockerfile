@@ -22,4 +22,4 @@ RUN gcloud components update kubectl
 
 RUN curl -sSL https://get.docker.com/ | sh
 
-COPY authenticate_with_google /usr/local/bin/
+COPY scripts/ /usr/bin/
