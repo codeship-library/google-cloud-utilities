@@ -1,5 +1,0 @@
-FROM codeship/google-cloud-deployment
-
-WORKDIR /app
-
-COPY deploy_to_google.sh ./

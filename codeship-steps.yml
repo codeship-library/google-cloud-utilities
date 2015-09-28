@@ -3,7 +3,7 @@
 - service: deployexample
   command: true
 - service: integrationtest
-  command: ./deploy_to_google.sh
+  command: /deploy/test/deploy_to_google.sh
 - service: googleclouddeployment
   tag: master
   type: push
