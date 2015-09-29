@@ -2,8 +2,6 @@ googleclouddeployment:
   build:
     image: codeship/google-cloud-deployment
     dockerfile: Dockerfile
-integrationtest:
-  image: codeship/google-cloud-deployment
   encrypted_env_file: test/google_deployment.env.encrypted
   add_docker: true
   volumes:

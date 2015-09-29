@@ -1,8 +1,6 @@
-- service: googleclouddeployment
-  command: true
 - service: deployexample
   command: true
-- service: integrationtest
+- service: googleclouddeployment
   command: /deploy/test/deploy_to_google.sh
 - service: googleclouddeployment
   tag: master
