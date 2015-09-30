@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+: ${GOOGLE_AUTH_JSON:?'Set the GOOGLE_AUTH_JSON environment variable'}
+: ${GOOGLE_AUTH_EMAIL:?'Set the GOOGLE_AUTH_EMAIL environment variable'}
+: ${GOOGLE_PROJECT_ID:?'Set the GOOGLE_PROJECT_ID environment variable'}
+
+SCRIPT_NAME=${1:?'You need to provide the action as the first parameter'}
+
+SCRIPT_PATH="$DIR/codeship_google_$SCRIPT_NAME"
+
+if [ -x $SCRIPT_PATH ]
+then
+  $SCRIPT_PATH
+else
+  echo "ACTION ${SCRIPT_NAME} is currently not supported"
+  exit 1
+fi

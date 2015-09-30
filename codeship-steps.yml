@@ -1,2 +1,10 @@
-- service: googlecloud
-  command: ./authenticate_and_run.sh
+- service: deployexample
+  command: true
+- service: googleclouddeployment
+  command: /deploy/test/deploy_to_google.sh
+- service: googleclouddeployment
+  tag: master
+  type: push
+  image_name: codeship/google-cloud-deployment
+  registry: https://index.docker.io/v1/
+  encrypted_dockercfg_path: dockercfg.encrypted

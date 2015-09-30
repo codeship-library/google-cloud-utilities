@@ -1,3 +1,13 @@
-googlecloud:
-  build: .
-  encrypted_env_file: keyconfig.env.encrypted
+googleclouddeployment:
+  build:
+    image: codeship/google-cloud-deployment
+    dockerfile: Dockerfile
+  encrypted_env_file: test/google_deployment.env.encrypted
+  add_docker: true
+  volumes:
+    - ./:/deploy
+deployexample:
+  build:
+    path: test
+    dockerfile_path: Dockerfile.example
+    image: codeship/google-deployment-example
