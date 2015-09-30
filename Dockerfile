@@ -1,8 +1,10 @@
 FROM debian:jessie
 
-# Copied from https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
-# If there are upstrem changes copy them here
+# The following commands enclosed in dashes are copied from the google/cloud-sdk
+# container Dockerfile https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
+# If there are upstream changes in the container copy those into the Dockerfile here
 
+#----------
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y -qq --no-install-recommends wget unzip python php5-mysql php5-cli php5-cgi openjdk-7-jre-headless openssh-client python-openssl curl && apt-get clean
 
@@ -15,8 +17,9 @@ RUN google-cloud-sdk/bin/gcloud --quiet config set component_manager/disable_upd
 RUN mkdir /.ssh
 ENV PATH /google-cloud-sdk/bin:$PATH
 ENV HOME /
+#----------
 
-# ----------
+# The following commands are not taken from the upstream google/cloud-sdk container
 
 RUN gcloud components update kubectl
 

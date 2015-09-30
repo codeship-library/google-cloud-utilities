@@ -10,11 +10,11 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 SCRIPT_NAME=${1:?'You need to provide the action as the first parameter'}
 
-SCRIPT_PATH=$DIR/codeship_google_$SCRIPT_NAME
+SCRIPT_PATH="$DIR/codeship_google_$SCRIPT_NAME"
 
 if [ -x $SCRIPT_PATH ]
 then
-  $SCRIPT_PATH $APPLICATION_NAME
+  $SCRIPT_PATH
 else
   echo "ACTION ${SCRIPT_NAME} is currently not supported"
   exit 1
