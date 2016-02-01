@@ -2,7 +2,6 @@
   command: true
 - service: deployexample
   type: push
-  tag: master
   image_name: gcr.io/codeship-production/google-deployment-example
   registry: https://gcr.io
   dockercfg_service: gcr_dockercfg
