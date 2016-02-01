@@ -14,24 +14,6 @@ codeship_google authenticate
 echo "Setting default timezone $DEFAULT_ZONE"
 gcloud config set compute/zone $DEFAULT_ZONE
 
-echo "Docker Environment Variables:"
-env | grep DOCKER
-
-echo "Print installed Docker Client Version"
-docker --version
-
-echo "Print Docker version of client and server"
-docker version
-
-echo "Docker Images"
-docker images
-
-echo "Tagging the Docker machine for Google Container Registry push"
-docker tag -f codeship/google-deployment-example $GOOGLE_CONTAINER_NAME
-
-echo "Pushing to Google Container Registry: $GOOGLE_CONTAINER_NAME"
-gcloud docker push $GOOGLE_CONTAINER_NAME
-
 echo "Starting Cluster on GCE for $KUBERNETES_APP_NAME"
 gcloud container clusters create $KUBERNETES_APP_NAME \
     --num-nodes 1 \
