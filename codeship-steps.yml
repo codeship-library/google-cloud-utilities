@@ -1,5 +1,10 @@
 - service: deployexample
   command: true
+- service: deployexample
+  type: push
+  image_name: gcr.io/codeship-production/google-deployment-example
+  registry: https://gcr.io
+  dockercfg_service: gcr_dockercfg
 - service: googleclouddeployment
   command: /deploy/test/deploy_to_google.sh
 - service: googleclouddeployment

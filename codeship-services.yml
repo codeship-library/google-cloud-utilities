@@ -10,4 +10,7 @@ deployexample:
   build:
     path: test
     dockerfile_path: Dockerfile.example
-    image: codeship/google-deployment-example
+    image: gcr.io/codeship-production/google-deployment-example
+gcr_dockercfg:
+  image: codeship/gcr-dockercfg-generator
+  encrypted_env_file: test/google_deployment.env.encrypted
