@@ -13,5 +13,4 @@ deployexample:
     image: gcr.io/codeship-production/google-deployment-example
 gcr_dockercfg:
   image: codeship/gcr-dockercfg-generator
-  add_docker: true
   encrypted_env_file: test/google_deployment.env.encrypted
