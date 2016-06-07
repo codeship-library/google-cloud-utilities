@@ -23,7 +23,7 @@ echo "Deploying image on GCE"
 kubectl run $KUBERNETES_APP_NAME --image=$GOOGLE_CONTAINER_NAME --port=8080
 
 echo "Exposing a port on GCE"
-kubectl expose rc $KUBERNETES_APP_NAME --create-external-load-balancer=true
+kubectl expose rc $KUBERNETES_APP_NAME
 
 echo "Waiting for services to boot"
 
