@@ -1,14 +1,12 @@
-FROM debian:jessie
-
+FROM gcr.io/google_appengine/base
 
 # This is loosely based on the Dockerfile for the google/cloud-sdk image available
 # at https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
 
 ENV \
-  CACHE_BUST=1 \
-  DEBIAN_DISTRIBUTION="jessie" \
-  CLOUDSDK_PYTHON_SITEPACKAGES=1 \
-  PATH="/google-cloud-sdk/bin:$PATH"
+	CACHE_BUST=1 \
+	CLOUDSDK_PYTHON_SITEPACKAGES=1 \
+	PATH="/google-cloud-sdk/bin:$PATH"
 
 RUN \
   DEBIAN_FRONTEND=noninteractive apt-get update && \
