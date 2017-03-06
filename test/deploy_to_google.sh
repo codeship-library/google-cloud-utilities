@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-date=$(date "+%Y-%m-%d_%H-%M")
+date=$(date "+%Y%m%d%H%M")
 cluster_name="codeship-gcloud-test-${date}"
 
 codeship_google authenticate
