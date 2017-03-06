@@ -6,6 +6,3 @@ googleclouddeployment:
   add_docker: true
   volumes:
     - ./:/deploy
-gcr_dockercfg:
-  image: codeship/gcr-dockercfg-generator
-  encrypted_env_file: test/google_deployment.env.encrypted
