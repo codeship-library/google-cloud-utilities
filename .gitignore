@@ -1,4 +1,5 @@
 .git
 codeship.aes
-keyconfig.env
+dockercfg
 google_deployment.env
+keyconfig.env
