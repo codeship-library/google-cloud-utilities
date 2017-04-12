@@ -8,7 +8,8 @@
   type: serial
   tag: master
   steps:
-    - service: deployment
+    - name: Push Deployment
+      service: deployment
       type: push
       image_name: codeship/google-cloud-deployment
       registry: https://index.docker.io/v1/
