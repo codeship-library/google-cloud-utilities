@@ -7,3 +7,18 @@ deployment:
   add_docker: true
   volumes:
     - ./deployment/:/deploy
+dockercfg_generator:
+  build:
+    image: codeship/gcr-dockercfg-generator
+    path: ./dockercfg-generator
+    dockerfile_path: ./Dockerfile
+  encrypted_env_file: dockercfg-generator/gcr.env.encrypted
+dockercfg_test:
+  build:
+    image: gcr.io/inner-melody-120319/codeship-testing
+    path: ./dockercfg-generator
+    dockerfile_path: Dockerfile.test
+dockercfg_test_generator:
+  image: codeship/gcr-dockercfg-generator
+  add_docker: true
+  encrypted_env_file: dockercfg-generator/gcr.env.encrypted
