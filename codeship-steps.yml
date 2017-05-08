@@ -1,8 +1,33 @@
-- service: googleclouddeployment
-  command: /deploy/test/deploy_to_google.sh
-- service: googleclouddeployment
+- name: Test
+  type: parallel
+  steps:
+    - name: Test Deployment
+      service: deployment
+      command: /deploy/test/deploy_to_google.sh
+    - name: Test dockercfg Generator
+      type: serial
+      steps:
+        - name: Build dockercfg Generator
+          service: dockercfg_generator
+          command: /dev/null
+        # - name: Test dockercfg Generator
+        #   service: dockercfg_test
+        #   type: push
+        #   image_name: gcr.io/inner-melody-120319/codeship-testing
+        #   registry: https://gcr.io
+        #   dockercfg_service: dockercfg_test_generator
+- name: Deploy (to Docker Hub)
+  type: serial
   tag: master
-  type: push
-  image_name: codeship/google-cloud-deployment
-  registry: https://index.docker.io/v1/
-  encrypted_dockercfg_path: dockercfg.encrypted
+  steps:
+    - name: Push Deployment
+      service: deployment
+      type: push
+      image_name: codeship/google-cloud-deployment
+      registry: https://index.docker.io/v1/
+      encrypted_dockercfg_path: dockercfg.encrypted
+    - name: Push dockercfg Generator
+      service: dockercfg_generator
+      type: push
+      image_name: codeship/gcr-dockercfg-generator
+      encrypted_dockercfg_path: dockercfg.encrypted

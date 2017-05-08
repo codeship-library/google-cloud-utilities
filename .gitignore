@@ -3,3 +3,4 @@ codeship.aes
 dockercfg
 google_deployment.env
 keyconfig.env
+gcr.env
