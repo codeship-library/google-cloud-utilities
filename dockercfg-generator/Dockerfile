@@ -3,7 +3,7 @@ MAINTAINER maintainers@codeship.com
 
 # Check for the latest available version on
 # https://cloud.google.com/sdk/docs/#linux
-ARG GOOGLE_CLOUD_VERSION="155.0.0"
+ARG GOOGLE_CLOUD_VERSION="157.0.0"
 
 ENV PATH /google-cloud-sdk/bin:$PATH
 
