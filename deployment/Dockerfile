@@ -4,7 +4,7 @@ FROM gcr.io/google_appengine/base
 # at https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
 
 ENV \
-	CACHE_BUST=3 \
+	CACHE_BUST=4 \
 	CLOUDSDK_PYTHON_SITEPACKAGES=1 \
 	PATH="/google-cloud-sdk/bin:$PATH"
 
