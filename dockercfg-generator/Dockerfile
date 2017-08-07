@@ -1,11 +1,11 @@
 FROM python:2.7-alpine
-MAINTAINER maintainers@codeship.com
+LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # Check for the latest available version on
 # https://cloud.google.com/sdk/docs/#linux
-ARG GOOGLE_CLOUD_VERSION="157.0.0"
+ARG GOOGLE_CLOUD_VERSION="165.0.0"
 
-ENV PATH /google-cloud-sdk/bin:$PATH
+ENV PATH="/google-cloud-sdk/bin:${PATH}"
 
 RUN apk add --no-cache \
       bash \
