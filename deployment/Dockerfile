@@ -1,12 +1,12 @@
 FROM gcr.io/google_appengine/base
+LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # This is loosely based on the Dockerfile for the google/cloud-sdk image available
 # at https://hub.docker.com/r/google/cloud-sdk/~/dockerfile/
 
-ENV \
-	CACHE_BUST=4 \
-	CLOUDSDK_PYTHON_SITEPACKAGES=1 \
-	PATH="/google-cloud-sdk/bin:$PATH"
+ENV CACHE_BUST='2017-08-07' \
+		CLOUDSDK_PYTHON_SITEPACKAGES=1 \
+		PATH="/google-cloud-sdk/bin:${PATH}"
 
 RUN \
 	apt-get update && \
