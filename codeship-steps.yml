@@ -3,7 +3,7 @@
   steps:
     - name: Test Deployment
       service: deployment
-      command: /deploy/test/deploy_to_google.sh
+      command: /test/deploy_to_google.sh
     - name: Test dockercfg Generator
       type: serial
       steps:
