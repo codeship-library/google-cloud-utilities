@@ -1,8 +1,0 @@
-.git
-.dockerignore
-.gitignore
-codeship.aes
-Dockerfile
-codeship-steps.yml
-codeship-services.yml
-google_deployment.env
