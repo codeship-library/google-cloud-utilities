@@ -1,6 +1,5 @@
 .git
 codeship.aes
 dockercfg
-google_deployment.env
+gcloud.env
 keyconfig.env
-gcr.env
