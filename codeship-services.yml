@@ -3,7 +3,7 @@ deployment:
     image: codeship/google-cloud-deployment
     path: ./deployment
     dockerfile: Dockerfile
-  encrypted_env_file: deployment/test/google_deployment.env.encrypted
+  encrypted_env_file: gcloud.env.encrypted
   add_docker: true
   volumes:
     - ./deployment/:/deploy
@@ -12,13 +12,10 @@ dockercfg_generator:
     image: codeship/gcr-dockercfg-generator
     path: ./dockercfg-generator
     dockerfile_path: ./Dockerfile
-  encrypted_env_file: dockercfg-generator/gcr.env.encrypted
+  add_docker: true
+  encrypted_env_file: gcloud.env.encrypted
 dockercfg_test:
   build:
-    image: gcr.io/inner-melody-120319/codeship-testing
+    image: gcr.io/key-airlock-160720/codeship-testing
     path: ./dockercfg-generator
     dockerfile_path: Dockerfile.test
-dockercfg_test_generator:
-  image: codeship/gcr-dockercfg-generator
-  add_docker: true
-  encrypted_env_file: dockercfg-generator/gcr.env.encrypted

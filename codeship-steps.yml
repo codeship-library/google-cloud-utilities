@@ -7,15 +7,15 @@
     - name: Test dockercfg Generator
       type: serial
       steps:
-        - name: Build dockercfg Generator
+        - name: Build
           service: dockercfg_generator
           command: /dev/null
-        # - name: Test dockercfg Generator
-        #   service: dockercfg_test
-        #   type: push
-        #   image_name: gcr.io/inner-melody-120319/codeship-testing
-        #   registry: https://gcr.io
-        #   dockercfg_service: dockercfg_test_generator
+        - name: Test Push
+          service: dockercfg_test
+          type: push
+          image_name: gcr.io/key-airlock-160720/codeship-testing
+          registry: https://gcr.io
+          dockercfg_service: dockercfg_generator
 - name: Deploy (to Docker Hub)
   type: serial
   tag: master

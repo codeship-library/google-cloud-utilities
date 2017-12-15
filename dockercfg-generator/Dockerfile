@@ -3,7 +3,7 @@ LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # Check for the latest available version on
 # https://cloud.google.com/sdk/docs/#linux
-ARG GOOGLE_CLOUD_VERSION="173.0.0"
+ARG GOOGLE_CLOUD_VERSION="183.0.0"
 
 ENV PATH="/google-cloud-sdk/bin:${PATH}"
 
@@ -20,6 +20,6 @@ RUN apk add --no-cache \
     && sed -i -- 's/\"disable_updater\": false/\"disable_updater\": true/g' /google-cloud-sdk/lib/googlecloudsdk/core/config.json \
     && mkdir /.ssh
 
-ADD gcr_docker_creds.sh ./
+COPY gcr_docker_creds.sh ./
 
 ENTRYPOINT ["./gcr_docker_creds.sh"]
