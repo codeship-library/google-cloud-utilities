@@ -6,7 +6,12 @@ cluster_name="codeship-gcloud-test-${date}"
 
 codeship_google authenticate
 
-echo "Starting a small cluster with a single instance"
+# echo "Setting context if cluster exists"
+# gcloud container clusters get-credentials $CLUSTER_NAME \
+# --project $PROJECT_ID \
+# --zone $DEFAULT_ZONE
+
+echo "Starting a small cluster with a single instance, if no cluster exists"
 gcloud config set compute/zone us-central1-a
 gcloud container clusters create "${cluster_name}" \
   --num-nodes 1 \
