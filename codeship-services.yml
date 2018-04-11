@@ -7,6 +7,12 @@ deployment:
   add_docker: true
   volumes:
     - ./deployment/:/deploy
+deployment_ansible:
+  build:
+    dockerfile: Dockerfile.ansible
+  encrypted_env_file: gcloud.env.encrypted
+  volumes:
+    - ./deployment/:/deploy
 dockercfg_generator:
   build:
     image: codeship/gcr-dockercfg-generator
