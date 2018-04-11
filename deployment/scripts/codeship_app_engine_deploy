@@ -6,6 +6,7 @@ PREVIOUS_WORKING_DIRECTORY="${PWD}"
 
 CODESHIP_GOOGLE_APP_ENGINE_PROJECT=${CODESHIP_GOOGLE_APP_ENGINE_PROJECT:-""}
 CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE=${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE:-""}
+CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT=${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT:-""}
 CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER:-"${PWD}"}
 CODESHIP_GOOGLE_APP_ENGINE_URL=${CODESHIP_GOOGLE_APP_ENGINE_URL:-""}
 CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL:-false}
@@ -19,7 +20,7 @@ codeship_app_engine_deploy Usage:
 
 required:
 -P or CODESHIP_GOOGLE_APP_ENGINE_PROJECT: app engine project id
--K or CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE: heroku API key
+-K or CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE: app engine key file (content may also be provided via CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT)
 
 optional:
 -f or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER: folder to deploy
@@ -61,7 +62,7 @@ function check_url {
   return ${status}
 }
 
-while getopts "P:K:f:u:c" opt; do
+while getopts "hP:K:f:u:c" opt; do
   case "$opt" in
     P)
       CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
@@ -88,10 +89,20 @@ if [ "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}" == "" ]; then
 fi
 
 #input validation
-if ! [ -f "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}" ]; then
+if ! [ -r "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}" ] || [ "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}" != "" ] ; then
   echo "key-file not set or not a file, exiting" >&2
   help
   exit 1
+fi
+
+if [ -r "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}" ] && [ "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}" != "" ]; then
+  echo "key-file and content set - please only use one!" >&2
+  help
+  exit 1
+fi
+
+if [ -r "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}" ] && [ "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}" == "" ]; then
+  CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="$(cat "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}")"
 fi
 
 trap 'echo error executing "$BASH_COMMAND" in line $LINENO' ERR
@@ -101,7 +112,7 @@ if [ "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}" != "${PWD}" ]; then
   cd "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}"
 fi
 
-gcloud auth activate-service-account --key-file "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}"
+gcloud auth activate-service-account --key-file <(echo "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}")
 
 gcloud app deploy --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
 
