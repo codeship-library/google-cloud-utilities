@@ -26,3 +26,17 @@
     creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/goapp"
   become: True
   become_user: "{{ gcloud_user }}"
+
+- name: put scripts into place
+  synchronize:
+    src: "{{ role_path }}/deployment/scripts/"
+    dest: "{{ gcloud_home }}/bin/"
+    use_ssh_args: True
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: fix file permissions
+  file:
+    dest: "{{ gcloud_home }}/bin/"
+    owner: "{{ gcloud_user }}"
+    recurse: yes

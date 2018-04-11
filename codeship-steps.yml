@@ -1,3 +1,6 @@
+- name: test app engine deployment
+  service: deployment_ansible
+  command: bash -c "codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship -K <(echo '$GOOGLE_KEY_TEST_GO')"
 - name: Test
   type: parallel
   steps:

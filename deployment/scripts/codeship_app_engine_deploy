@@ -1,0 +1,117 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+PREVIOUS_WORKING_DIRECTORY="${PWD}"
+
+CODESHIP_GOOGLE_APP_ENGINE_PROJECT=${CODESHIP_GOOGLE_APP_ENGINE_PROJECT:-""}
+CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE=${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE:-""}
+CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER:-"${PWD}"}
+CODESHIP_GOOGLE_APP_ENGINE_URL=${CODESHIP_GOOGLE_APP_ENGINE_URL:-""}
+CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL:-false}
+
+SCRIPT_DIRECTORY="$( cd "$(dirname "$0")" ; pwd -P )"
+
+function help {
+  cat << EOF
+codeship_app_engine_deploy Usage:
+--
+
+required:
+-P or CODESHIP_GOOGLE_APP_ENGINE_PROJECT: app engine project id
+-K or CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE: heroku API key
+
+optional:
+-f or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER: folder to deploy
+-u or CODESHIP_GOOGLE_APP_ENGINE_URL: url running the service (to use in conjunction with -c)
+-c or CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL: check url if service is running after deployment [true/false]
+-h: this
+
+EOF
+}
+
+function check_url {
+  local tries=6
+  local status=0
+  local cmd="wget --no-check-certificate --output-document=/dev/null ${1}"
+
+  for (( i = 1; i <=${tries}; i++ )); do
+    echo -e "\e[0;36mTrying ($i of ${TRIES}) '${cmd}'\e[0m"
+    ${cmd}
+    status=$?
+
+    if [ ${status} -eq 0 ]; then
+      break
+    fi
+
+    if [ ${status} -eq 5 ]; then
+      echo -e "\e[0;33mCheck failed because of an error validating the SSL certificate.\e[0m"
+      echo -e "\e[0;33mWe will retry without checking the certificate, but this behaviour will change in the future!\e[0m"
+      cmd="${original_cmd}"
+      status=0
+    fi
+
+    if [ $i -lt ${TRIES} ]; then
+      echo -e "\e[0;36mWaiting ${WAIT} seconds before trying again.\e[0m"
+      echo "------------------------------------------------------------------------------------------------------"
+      sleep "${WAIT}"
+    fi
+  done
+
+  return ${status}
+}
+
+while getopts "P:K:f:u:c" opt; do
+  case "$opt" in
+    P)
+      CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
+    K)
+      CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE="$OPTARG"; ;;
+    f)
+      CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER="$OPTARG"; ;;
+    u)
+      CODESHIP_GOOGLE_APP_ENGINE_URL="$OPTARG"; ;;
+    c)
+      CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=true; ;;
+    h) help; exit 0 ;;
+    *)
+      help
+      exit 1 ;;
+  esac
+done
+
+#input validation
+if [ "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}" == "" ]; then
+  echo "project not set, exiting" >&2
+  help
+  exit 1
+fi
+
+#input validation
+if ! [ -f "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}" ]; then
+  echo "key-file not set or not a file, exiting" >&2
+  help
+  exit 1
+fi
+
+trap 'echo error executing "$BASH_COMMAND" in line $LINENO' ERR
+
+if [ "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}" != "${PWD}" ]; then
+  echo "Changing directory to ${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}"
+  cd "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}"
+fi
+
+gcloud auth activate-service-account --key-file "${CODESHIP_GOOGLE_APP_ENGINE_KEY_FILE}"
+
+gcloud app deploy --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
+
+if [ "${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL}" == "true" ]; then
+  if [ "${CODESHIP_GOOGLE_APP_ENGINE_URL}" != "" ]; then
+    URL="${CODESHIP_GOOGLE_APP_ENGINE_URL}"
+  else
+    URL="$(gcloud app describe --project codeship-basic-testing | grep defaultHostname | awk '{printf "http://%s", $2}')"
+  fi
+  check_url "${URL}"
+fi
+
+cd "${PREVIOUS_WORKING_DIRECTORY}"
