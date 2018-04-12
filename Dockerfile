@@ -13,6 +13,7 @@ RUN \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 		apt-transport-https \
 		ca-certificates \
+		jq \
 		curl \
 		software-properties-common && \
 	curl -fsSL https://apt.dockerproject.org/gpg | apt-key add - && \

@@ -1,6 +1,21 @@
-- name: test app engine deployment
+- name: negative test check URL not existing
   service: deployment_ansible
-  command: bash -c "codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-basic-testing -K <(echo "$GOOGLE_KEY_TEST_GO")"
+  command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c -u http://foo.bar.baz'
+- name: test golang app engine deployment
+  service: deployment_ansible
+  command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c"
+- name: test php app engine deployment
+  service: deployment_ansible
+  command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c"
+- name: negative test detects invalid JSON
+  service: deployment_ansible
+  command: bash -c "! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NO_JSON}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c"
+#- name: test ruby app engine deployment
+#  service: deployment_ansible
+#  command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
+#- name: test node app engine deployment
+#  service: deployment_ansible
+#  command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NODE}" codeship_app_engine_deploy -f /deploy/test-app-engine-node -P codeship-deploy-test-node -c"
 - name: Test
   type: parallel
   steps:
