@@ -1,6 +1,3 @@
-- name: test python app engine deployment
-  service: deployment_ansible
-  command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-python -c'
 - name: negative test check URL not existing
   service: deployment_ansible
   command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c -u http://foo.bar.baz'
@@ -17,6 +14,9 @@
   service: deployment_ansible
   command:  bash -c 'test -x "$(which appcfg.sh)" && test -x "$(which appcfg.py)"'
 
+#- name: test python app engine deployment
+#  service: deployment_ansible
+#  command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-python -c'
 #- name: test ruby app engine deployment
 #  service: deployment_ansible
 #  command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
