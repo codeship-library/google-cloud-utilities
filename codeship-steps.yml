@@ -12,7 +12,7 @@
   command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NO_JSON}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
 - name: availability of legacy commands
   service: deployment_ansible
-  command:  bash -c 'test -x "$(which appcfg.sh)" && test -x "$(which appcfg.py)"'
+  command:  bash -c 'test -x "$(which appcfg.sh)" && test -x "$(which appcfg.py)" && test -x "$(which goapp)"'
 
 #- name: test python app engine deployment
 #  service: deployment_ansible
