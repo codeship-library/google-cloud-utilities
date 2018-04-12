@@ -14,6 +14,7 @@ RUN \
 		apt-transport-https \
 		ca-certificates \
 		curl \
+		jq \
 		software-properties-common && \
 	curl -fsSL https://apt.dockerproject.org/gpg | apt-key add - && \
 	add-apt-repository \
