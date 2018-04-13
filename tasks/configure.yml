@@ -1,0 +1,10 @@
+- name: check gcloud config
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config list"
+  become: True
+  become_user: "{{ gcloud_user }}"
+  register: gcloud_config
+
+- name: set gcloud disable prompts for non-interactive deployments
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set core/disable_prompts 1"
+  when: '"disable_prompts = 1" not in gcloud_config.stdout'
+

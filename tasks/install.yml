@@ -1,0 +1,42 @@
+- name: download gcloud sdk
+  get_url:
+    url: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
+    dest: "/tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: untar gcloud
+  unarchive:
+    remote_src: True
+    src: "/tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
+    dest: "{{ gcloud_home }}"
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: install python appengine
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-python -q"
+  args:
+    creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/appcfg.py"
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: install go appengine
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-go -q"
+  args:
+    creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/goapp"
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: put scripts into place
+  synchronize:
+    src: "{{ role_path }}/deployment/scripts/"
+    dest: "{{ gcloud_home }}/bin/"
+    use_ssh_args: True
+  become: True
+  become_user: "{{ gcloud_user }}"
+
+- name: fix file permissions
+  file:
+    dest: "{{ gcloud_home }}/bin/"
+    owner: "{{ gcloud_user }}"
+    recurse: yes
