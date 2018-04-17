@@ -15,3 +15,6 @@ COPY deployment /google-cloud/deployment
 RUN ansible-playbook -i localhost -c local site.yml
 
 ENV PATH="/root/bin:/root/google-cloud-sdk/bin:/root/appengine/python_appengine:/root/appengine/go_appengine:/root/appengine/java_appengine/bin:${PATH}"
+
+#for the mvn deploy tests
+RUN apt update && apt install -y --no-install-recommends --no-install-suggests maven
