@@ -9,6 +9,7 @@ CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT=${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT:
 CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER:-"${PWD}"}
 CODESHIP_GOOGLE_APP_ENGINE_URL=${CODESHIP_GOOGLE_APP_ENGINE_URL:-""}
 CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL:-false}
+CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND:-"gcloud"}
 
 SCRIPT_DIRECTORY="$( cd "$(dirname "$0")" ; pwd -P )"
 
@@ -25,6 +26,7 @@ optional:
 -f or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER: folder to deploy
 -u or CODESHIP_GOOGLE_APP_ENGINE_URL: url running the service (to use in conjunction with -c)
 -c or CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL: check url if service is running after deployment [true/false]
+-d or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND: which tool to use for deployment [gcloud/maven] (most useful to switch to maven for java deployment)
 -h: this
 
 EOF
@@ -61,7 +63,7 @@ function check_url {
   return ${status}
 }
 
-while getopts "hP:C:f:u:c" opt; do
+while getopts "hK:P:C:f:d:u:c" opt; do
   case "$opt" in
     P)
       CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
@@ -69,6 +71,8 @@ while getopts "hP:C:f:u:c" opt; do
       CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="$OPTARG"; ;;
     f)
       CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER="$OPTARG"; ;;
+    d)
+      CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND="$OPTARG"; ;;
     u)
       CODESHIP_GOOGLE_APP_ENGINE_URL="$OPTARG"; ;;
     c)
@@ -94,6 +98,12 @@ if [ "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}" == "" ] ; then
   exit 1
 fi
 
+if [ "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND}" != "maven" ] && [ "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND}" != "gcloud" ]; then
+  echo "deploy-command not maven or gcloud"
+  help
+  exit 1
+fi
+
 if ! (echo "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}" | jq . > /dev/null 2>&1) ; then
   echo "key-content not valid JSON, exiting" >&2
   help
@@ -109,7 +119,15 @@ fi
 
 gcloud auth activate-service-account --key-file <(echo "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}")
 
-gcloud app deploy --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
+case "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND}" in
+"gcloud")
+  gcloud app deploy --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
+  ;;
+"maven")
+  mvn appengine:deploy -Dapp.deploy.project="${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
+  ;;
+esac
+
 
 if [ "${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL}" == "true" ]; then
   if [ "${CODESHIP_GOOGLE_APP_ENGINE_URL}" != "" ]; then

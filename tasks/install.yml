@@ -27,6 +27,13 @@
   become: True
   become_user: "{{ gcloud_user }}"
 
+- name: install java appengine
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-java -q"
+  args:
+    creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/google/appengine/tools/java/lib/appengine-tools-api.jar"
+  become: True
+  become_user: "{{ gcloud_user }}"
+
 - name: put scripts into place
   synchronize:
     src: "{{ role_path }}/deployment/scripts/"

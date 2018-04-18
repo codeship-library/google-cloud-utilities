@@ -2,6 +2,7 @@ deployment_ansible:
   build:
     dockerfile: Dockerfile.ansible
   encrypted_env_file: gcloud.env.encrypted
+  cached: true
   volumes:
     - ./deployment/:/deploy
 deployment:

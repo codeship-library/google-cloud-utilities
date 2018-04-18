@@ -1,6 +1,9 @@
 - name: test app engine deployments
   type: parallel
   steps:
+    - name: test java app engine deployment
+      service: deployment_ansible
+      command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_JAVA}" codeship_app_engine_deploy -d maven -f /deploy/test-app-engine-java -P codeship-deploy-test-java -c"
     - name: test ruby app engine deployment
       service: deployment_ansible
       command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
