@@ -6,5 +6,12 @@
 
 - name: set gcloud disable prompts for non-interactive deployments
   shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set core/disable_prompts 1"
+  become: True
+  become_user: "{{ gcloud_user }}"
   when: '"disable_prompts = 1" not in gcloud_config.stdout'
 
+- name: set gcloud disable update check
+  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set component_manager/disable_update_check true"
+  become: True
+  become_user: "{{ gcloud_user }}"
+  when: '"disable_update_check = true" not in gcloud_config.stdout'
