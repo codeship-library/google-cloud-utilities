@@ -3,3 +3,4 @@ codeship.aes
 dockercfg
 gcloud.env
 keyconfig.env
+deployment/test-app-engine-java/target/
