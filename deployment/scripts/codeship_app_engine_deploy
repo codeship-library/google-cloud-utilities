@@ -143,6 +143,9 @@ if [ "${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL}" == "true" ]; then
 fi
 
 VERSIONS=$(gcloud app versions list --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}" --sort-by '~version' --format 'value(version.id)')
+
+echo "${VERSIONS}"
+
 VERSION_COUNT=0
 echo "Cleaning up after deployment, keeping the last ${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS} versions."
 for VERSION in ${VERSIONS}; do
