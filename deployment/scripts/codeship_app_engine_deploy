@@ -10,6 +10,7 @@ CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOL
 CODESHIP_GOOGLE_APP_ENGINE_URL=${CODESHIP_GOOGLE_APP_ENGINE_URL:-""}
 CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL:-false}
 CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND:-"gcloud"}
+CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS=${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS:-5}
 
 SCRIPT_DIRECTORY="$( cd "$(dirname "$0")" ; pwd -P )"
 
@@ -27,6 +28,7 @@ optional:
 -u or CODESHIP_GOOGLE_APP_ENGINE_URL: url running the service (to use in conjunction with -c)
 -c or CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL: check url if service is running after deployment [true/false]
 -d or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND: which tool to use for deployment [gcloud/maven] (most useful to switch to maven for java deployment)
+-k or CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS: how many versions to keep online after deployment
 -h: this
 
 EOF
@@ -63,7 +65,7 @@ function check_url {
   return ${status}
 }
 
-while getopts "hK:P:C:f:d:u:c" opt; do
+while getopts "hK:P:C:f:d:u:k:c" opt; do
   case "$opt" in
     P)
       CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
@@ -77,6 +79,8 @@ while getopts "hK:P:C:f:d:u:c" opt; do
       CODESHIP_GOOGLE_APP_ENGINE_URL="$OPTARG"; ;;
     c)
       CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=true; ;;
+    k)
+      CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS=${OPTARG}; ;;
     h) help; exit 0 ;;
     *)
       help
@@ -133,9 +137,22 @@ if [ "${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL}" == "true" ]; then
   if [ "${CODESHIP_GOOGLE_APP_ENGINE_URL}" != "" ]; then
     URL="${CODESHIP_GOOGLE_APP_ENGINE_URL}"
   else
-    URL="$(gcloud app describe --project ${CODESHIP_GOOGLE_APP_ENGINE_PROJECT} | grep defaultHostname | awk '{printf "http://%s", $2}')"
+    URL="$(gcloud app describe --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}" | grep defaultHostname | awk '{printf "http://%s", $2}')"
   fi
   check_url "${URL}"
 fi
+
+VERSIONS=$(gcloud app versions list --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}" --format 'value(version.id)' | sort -r)
+
+VERSION_COUNT=0
+echo "Cleaning up after deployment, keeping the last ${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS} versions."
+for VERSION in ${VERSIONS}; do
+  ((++VERSION_COUNT))
+  if [[ "${VERSION_COUNT}" -gt "${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS}" ]]; then
+    gcloud app versions delete "${VERSION}" --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
+  else
+    echo "Skipping version ${VERSION}"
+  fi
+done
 
 cd "${PREVIOUS_WORKING_DIRECTORY}"
