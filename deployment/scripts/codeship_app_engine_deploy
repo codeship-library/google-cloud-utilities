@@ -146,7 +146,7 @@ VERSIONS=$(gcloud app versions list --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJ
 VERSION_COUNT=0
 echo "Cleaning up after deployment, keeping the last ${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS} versions."
 for VERSION in ${VERSIONS}; do
-  ((VERSION_COUNT++))
+  ((++VERSION_COUNT))
   if [[ "${VERSION_COUNT}" -gt "${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS}" ]]; then
     echo "Deleting version ${VERSION}"
     gcloud app versions delete "${VERSION}" --project "${CODESHIP_GOOGLE_APP_ENGINE_PROJECT}"
