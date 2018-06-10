@@ -5,4 +5,4 @@
     gcloud_user: root
     gcloud_home: /root
     gae_java_version: 1.9.63
-    gcloud_version: 202.0.0
+    gcloud_version: 204.0.0
