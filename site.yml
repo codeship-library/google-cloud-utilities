@@ -4,5 +4,5 @@
   - role: google-cloud
     gcloud_user: root
     gcloud_home: /root
-    gae_java_version: 1.9.63
+    gae_java_version: 1.9.64
     gcloud_version: 204.0.0
