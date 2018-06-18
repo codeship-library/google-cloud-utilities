@@ -9,6 +9,7 @@ RUN \
 RUN mkdir /root/bin
 
 COPY tasks /google-cloud/tasks
+COPY vars /google-cloud/vars
 COPY site.yml site.yml
 COPY deployment /google-cloud/deployment
 
