@@ -68,7 +68,7 @@ function check_url {
   return ${status}
 }
 
-while getopts "hK:P:C:f:d:u:k:cC" opt; do
+while getopts "hK:P:f:d:u:k:cC" opt; do
   case "$opt" in
     P)
       CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
