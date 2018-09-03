@@ -20,7 +20,7 @@ codeship_app_engine_deploy Usage:
 
 required:
 -P or CODESHIP_GOOGLE_APP_ENGINE_PROJECT: app engine project id
--C or CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT: app engine key content
+-K or CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT: app engine key content
 
 optional:
 -f or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER: folder to deploy
