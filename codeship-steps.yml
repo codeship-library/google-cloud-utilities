@@ -7,7 +7,7 @@
     - name: test ruby app engine deployment
       service: deployment_ansible
       command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
-    - name; python based deployment checks
+    - name: python based deployment checks
       type: serial
       steps:
         - name: test python app engine deployment
