@@ -15,10 +15,10 @@
           command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
         - name: test that a git repository can be reset with -C
           service: deployment_ansible
-          command: bash -c 'echo "foo" > /deploy/test-app-engine-python/main.py && cd /deploy/test-app-engine-python && git config --global user.email "you@example.com" && git config --global user.name "Your Name" && git init && git add . && git commit -m "foo" && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c -C'
+          command: bash -c 'cd /deploy/test-app-engine-python && git config --global user.email "you@example.com" && git config --global user.name "Your Name" && git init && git add . && git commit -m "foo" && echo "foo" > main.py && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c -C'
         - name: negative test for a git repository reset where we dont reset but deploy garbage, which should fail the URL check
           service: deployment_ansible
-          command: bash -c 'echo "foo" > /deploy/test-app-engine-python/main.py && cd /deploy/test-app-engine-python && git config --global user.email "you@example.com" && git config --global user.name "Your Name" && git init && git add . && git commit -m "foo" && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
+          command: bash -c 'cd /deploy/test-app-engine-python && echo "foo" > main.py && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
         - name: negative test check URL not existing
           service: deployment_ansible
           command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-python -c -u http://foo.bar.baz'
