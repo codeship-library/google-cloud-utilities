@@ -19,12 +19,13 @@
         - name: negative test for a git repository reset where we dont reset but deploy garbage, which should fail the URL check
           service: deployment_ansible
           command: bash -c 'cd /deploy/test-app-engine-python && echo "foo" > main.py && ! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
-        - name: negative test check URL not existing
+    - name: go based deployment checks
+        - name: test go app engine deployment
           service: deployment_ansible
-          command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-python -c -u http://foo.bar.baz'
-    - name: test go app engine deployment
-      service: deployment_ansible
-      command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c'
+          command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c'
+        - name: negative test check URL not existin
+          service: deployment_ansible
+          command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c -u http://foo.bar.baz'
     - name: test php app engine deployment
       service: deployment_ansible
       command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
