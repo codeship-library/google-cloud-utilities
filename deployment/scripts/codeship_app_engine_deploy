@@ -11,8 +11,7 @@ CODESHIP_GOOGLE_APP_ENGINE_URL=${CODESHIP_GOOGLE_APP_ENGINE_URL:-""}
 CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=${CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL:-false}
 CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND=${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND:-"gcloud"}
 CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS=${CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS:-5}
-
-SCRIPT_DIRECTORY="$( cd "$(dirname "$0")" ; pwd -P )"
+CODESHIP_GOOGLE_APP_ENGINE_CLEAN_DEPLOY=${CODESHIP_GOOGLE_APP_ENGINE_CLEAN_DEPLOY:-false}
 
 function help {
   cat << EOF
@@ -21,7 +20,7 @@ codeship_app_engine_deploy Usage:
 
 required:
 -P or CODESHIP_GOOGLE_APP_ENGINE_PROJECT: app engine project id
--C or CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT: app engine key content
+-K or CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT: app engine key content
 
 optional:
 -f or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER: folder to deploy
@@ -29,6 +28,7 @@ optional:
 -c or CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL: check url if service is running after deployment [true/false]
 -d or CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_COMMAND: which tool to use for deployment [gcloud/maven] (most useful to switch to maven for java deployment)
 -k or CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS: how many versions to keep online after deployment
+-C or CODESHIP_GOOGLE_APP_ENGINE_CLEAN_DEPLOY: whether the git checkout folder should be reset back to its committed state before deployment [true/false]
 -h: this
 
 EOF
@@ -37,10 +37,13 @@ EOF
 function check_url {
   local tries=6
   local status=0
+  local wait=30
   local cmd="wget --no-check-certificate --output-document=/dev/null ${1}"
 
+  sleep ${wait}
+
   for (( i = 1; i <=${tries}; i++ )); do
-    echo -e "\e[0;36mTrying ($i of ${TRIES}) '${cmd}'\e[0m"
+    echo -e "\e[0;36mTrying ($i of ${tries}) '${cmd}'\e[0m"
     ${cmd}
     status=$?
 
@@ -55,17 +58,17 @@ function check_url {
       status=0
     fi
 
-    if [ $i -lt ${TRIES} ]; then
-      echo -e "\e[0;36mWaiting ${WAIT} seconds before trying again.\e[0m"
+    if [ $i -lt ${tries} ]; then
+      echo -e "\e[0;36mWaiting ${wait} seconds before trying again.\e[0m"
       echo "------------------------------------------------------------------------------------------------------"
-      sleep "${WAIT}"
+      sleep "${wait}"
     fi
   done
 
   return ${status}
 }
 
-while getopts "hK:P:C:f:d:u:k:c" opt; do
+while getopts "hK:P:f:d:u:k:cC" opt; do
   case "$opt" in
     P)
       CODESHIP_GOOGLE_APP_ENGINE_PROJECT="$OPTARG"; ;;
@@ -81,6 +84,8 @@ while getopts "hK:P:C:f:d:u:k:c" opt; do
       CODESHIP_GOOGLE_APP_ENGINE_CHECK_URL=true; ;;
     k)
       CODESHIP_GOOGLE_APP_ENGINE_KEEP_VERSIONS=${OPTARG}; ;;
+    C)
+      CODESHIP_GOOGLE_APP_ENGINE_CLEAN_DEPLOY=true; ;;
     h) help; exit 0 ;;
     *)
       help
@@ -119,6 +124,11 @@ trap 'echo error executing "$BASH_COMMAND" in line $LINENO' ERR
 if [ "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}" != "${PWD}" ]; then
   echo "Changing directory to ${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}"
   cd "${CODESHIP_GOOGLE_APP_ENGINE_DEPLOY_FOLDER}"
+fi
+
+if [ "${CODESHIP_GOOGLE_APP_ENGINE_CLEAN_DEPLOY}" == "true" ]; then
+  git reset --hard HEAD
+  git clean -f
 fi
 
 gcloud auth activate-service-account --key-file <(echo "${CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT}")

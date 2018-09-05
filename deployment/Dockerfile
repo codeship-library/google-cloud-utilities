@@ -11,6 +11,7 @@ ENV CACHE_BUST='2018-08-24' \
 RUN \
 	apt-get update && \
 	DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+		git \
 		apt-transport-https \
 		ca-certificates \
 		curl \
