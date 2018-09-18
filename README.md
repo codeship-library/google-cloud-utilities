@@ -1,4 +1,4 @@
-# Google Cloud related Docker images for Codeship properties - Forked
+# Google Cloud related Docker images for Codeship properties
 
 ## Google Cloud deployment
 
