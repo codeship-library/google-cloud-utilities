@@ -37,7 +37,7 @@ EOF
 function check_url {
   local tries=6
   local status=0
-  local wait=30
+  local wait=60
   local cmd="wget --no-check-certificate --output-document=/dev/null ${1}"
 
   sleep ${wait}
