@@ -1,4 +1,4 @@
-deployment_ansible:
+deployment-ansible:
   build:
     dockerfile: Dockerfile.ansible
   encrypted_env_file: gcloud.env.encrypted
@@ -14,14 +14,14 @@ deployment:
   add_docker: true
   volumes:
     - ./deployment/:/deploy
-dockercfg_generator:
+dockercfg-generator:
   build:
     image: codeship/gcr-dockercfg-generator
     path: ./dockercfg-generator
     dockerfile_path: ./Dockerfile
   add_docker: true
   encrypted_env_file: gcloud.env.encrypted
-dockercfg_test:
+dockercfg-test:
   build:
     image: gcr.io/key-airlock-160720/codeship-testing
     path: ./dockercfg-generator

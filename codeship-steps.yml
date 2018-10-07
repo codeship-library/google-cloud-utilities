@@ -2,43 +2,43 @@
   type: parallel
   steps:
     - name: test java app engine deployment
-      service: deployment_ansible
+      service: deployment-ansible
       command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_JAVA}" codeship_app_engine_deploy -d maven -f /deploy/test-app-engine-java -P codeship-deploy-test-java -c"
     - name: test ruby app engine deployment
-      service: deployment_ansible
+      service: deployment-ansible
       command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
     - name: python based deployment checks
       type: serial
       steps:
         - name: test python app engine deployment
-          service: deployment_ansible
+          service: deployment-ansible
           command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
         - name: test that a git repository can be reset with -C
-          service: deployment_ansible
+          service: deployment-ansible
           command: bash -c 'cd /deploy/test-app-engine-python && git config --global user.email "you@example.com" && git config --global user.name "Your Name" && git init && git add . && git commit -m "foo" && echo "foo" > main.py && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c -C'
         - name: negative test for a git repository reset where we dont reset but deploy garbage, which should fail the URL check
-          service: deployment_ansible
+          service: deployment-ansible
           command: bash -c 'cd /deploy/test-app-engine-python && echo "foo" > main.py && ! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
     - name: go based deployment checks
       type: serial
       steps:
         - name: test go app engine deployment
-          service: deployment_ansible
+          service: deployment-ansible
           command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c'
         - name: negative test check URL not existin
-          service: deployment_ansible
+          service: deployment-ansible
           command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c -u http://foo.bar.baz'
     - name: test php app engine deployment
-      service: deployment_ansible
+      service: deployment-ansible
       command: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
     - name: negative test detects invalid JSON
-      service: deployment_ansible
+      service: deployment-ansible
       command: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NO_JSON}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
     - name: availability of legacy commands
-      service: deployment_ansible
+      service: deployment-ansible
       command:  bash -c 'test -x "$(which appcfg.sh)" && test -x "$(which appcfg.py)" && test -x "$(which goapp)"'
     - name: test node app engine deployment
-      service: deployment_ansible
+      service: deployment-ansible
       command: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NODE}" codeship_app_engine_deploy -f /deploy/test-app-engine-node -P codeship-deploy-test-node -c"
 - name: Test
   type: parallel
@@ -50,14 +50,14 @@
       type: serial
       steps:
         - name: Build
-          service: dockercfg_generator
+          service: dockercfg-generator
           command: /dev/null
         - name: Test Push
-          service: dockercfg_test
+          service: dockercfg-test
           type: push
           image_name: gcr.io/key-airlock-160720/codeship-testing
           registry: https://gcr.io
-          dockercfg_service: dockercfg_generator
+          dockercfg_service: dockercfg-generator
 - name: Deploy (to Docker Hub)
   type: serial
   tag: master
@@ -69,7 +69,7 @@
       registry: https://index.docker.io/v1/
       encrypted_dockercfg_path: dockercfg.encrypted
     - name: Push dockercfg Generator
-      service: dockercfg_generator
+      service: dockercfg-generator
       type: push
       image_name: codeship/gcr-dockercfg-generator
       encrypted_dockercfg_path: dockercfg.encrypted
