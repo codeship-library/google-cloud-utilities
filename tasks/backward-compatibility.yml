@@ -26,7 +26,6 @@
   become_user: "{{ gcloud_user }}"
   with_items:
     - "google-cloud-sdk/platform/google_appengine/appcfg.py"
-    - "google-cloud-sdk/platform/google_appengine/goapp"
 
 - name: download java appengine
   get_url:
