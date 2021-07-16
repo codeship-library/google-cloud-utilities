@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:279.0.0-slim
+FROM google/cloud-sdk:269.0.0-slim
 LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 RUN \
