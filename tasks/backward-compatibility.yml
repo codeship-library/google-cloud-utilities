@@ -17,17 +17,6 @@
     - "{{ gcloud_home }}/appengine/google_appengine"
     - "{{ gcloud_home }}/appengine/go_appengine"
 
-- name: make appcfg.py/goapp executable again to ensure backward compatibility
-  file:
-    state: file
-    dest: "{{ gcloud_home }}/{{ item }}"
-    mode: 0755
-  become: True
-  become_user: "{{ gcloud_user }}"
-  with_items:
-    - "google-cloud-sdk/platform/google_appengine/appcfg.py"
-    - "google-cloud-sdk/platform/google_appengine/goapp"
-
 - name: download java appengine
   get_url:
     url: "https://storage.googleapis.com/appengine-sdks/featured/appengine-java-sdk-{{ gae_java_version }}.zip"
