@@ -13,7 +13,8 @@ gcloud auth activate-service-account "${GOOGLE_AUTH_EMAIL}" --key-file /keyconfi
 
 # Syncing credentials
 echo "Syncing GCR credentials"
-gcloud auth configure-docker
+gcloud auth configure-docker -q
 
 echo "Writing Docker creds to $1"
-cat ~/.dockercfg > $1
+chmod 544 ~/.docker/config.json
+cp ~/.docker/config.json $1
