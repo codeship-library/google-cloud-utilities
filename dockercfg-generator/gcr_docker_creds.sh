@@ -12,8 +12,15 @@ echo "${GOOGLE_AUTH_JSON}" > /keyconfig.json
 gcloud auth activate-service-account "${GOOGLE_AUTH_EMAIL}" --key-file /keyconfig.json --project "${GOOGLE_PROJECT_ID}"
 
 # Syncing credentials
-echo "Syncing GCR credentials"
-gcloud docker -a
+echo "Syncing GCR credentials for gcr.io"
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+echo "Syncing GCR credentials for us.gcr.io"
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us.gcr.io
+echo "Syncing GCR credentials for eu.gcr.io"
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://eu.gcr.io
+echo "Syncing GCR credentials for asia.gcr.io"
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://asia.gcr.io
 
 echo "Writing Docker creds to $1"
-cat ~/.dockercfg > $1
+chmod 544 ~/.docker/config.json
+cp ~/.docker/config.json $1

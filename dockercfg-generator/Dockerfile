@@ -11,6 +11,7 @@ RUN apk add --no-cache \
       bash \
       ca-certificates \
       openssl \
+      docker \
     && wget "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GOOGLE_CLOUD_VERSION}-linux-x86_64.tar.gz" \
     && gunzip "google-cloud-sdk-${GOOGLE_CLOUD_VERSION}-linux-x86_64.tar.gz" \
     && tar xf "google-cloud-sdk-${GOOGLE_CLOUD_VERSION}-linux-x86_64.tar" \
