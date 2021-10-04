@@ -1,4 +1,4 @@
-FROM python:3.9.6-alpine3.13
+FROM python:3.9-alpine
 LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # Check for the latest version on
