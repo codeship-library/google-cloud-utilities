@@ -8,7 +8,8 @@ RUN \
 		openssh-client \
 		sudo && \
 	DEBIAN_FRONTEND=noninteractive sudo apt-get install -y --no-install-recommends \
-		kubectl && \
+		kubectl \
+		google-cloud-sdk-gke-gcloud-auth-plugin && \
 	apt-get clean -y && \
 	rm -rf /var/lib/apt/lists/*
 
