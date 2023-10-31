@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV LANG=C.UTF-8
 
@@ -7,7 +7,7 @@ RUN \
   apt-get install -y --no-install-recommends python3-setuptools python3-pip apt-transport-https ca-certificates wget rsync unzip jq git && \
   pip3 install --upgrade pip && \
   pip3 install wheel && \
-  pip3 install ansible==2.8.20 pyasn1==0.4.8 ndg-httpsclient==0.5.1 urllib3==1.26.3
+  pip3 install ansible-base==2.10.13 ansible==2.10.7 pyasn1==0.4.8 ndg-httpsclient==0.5.1 urllib3==1.26.6
 
 RUN mkdir /root/bin
 
@@ -20,5 +20,5 @@ RUN ansible-playbook -i localhost -c local site.yml
 
 ENV PATH="/root/bin:/root/google-cloud-sdk/bin:/root/appengine/python_appengine:/root/appengine/go_appengine:/root/appengine/java_appengine/bin:${PATH}"
 
-#for the mvn deploy tests
-RUN apt-get update && apt-get install -y --no-install-recommends --no-install-suggests maven openjdk-8-jdk
+# For the Maven deploy tests
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends --no-install-suggests maven openjdk-8-jdk

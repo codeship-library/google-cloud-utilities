@@ -1,9 +1,9 @@
-FROM python:3.11-alpine
+FROM python:3.12-alpine
 LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # Check for the latest version on
 # https://cloud.google.com/sdk/docs/install#linux
-ARG GOOGLE_CLOUD_VERSION="423.0.0"
+ARG GOOGLE_CLOUD_VERSION="452.0.1"
 
 ENV PATH="/google-cloud-sdk/bin:${PATH}"
 
