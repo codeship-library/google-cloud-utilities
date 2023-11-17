@@ -10,8 +10,8 @@ env:
     CI_BRANCH: ${{ cloudbees.scm.branch }}
     CI_BUILD_ID: ${{ cloudbees.run_id }}
     CI_BUILD_URL: Not currently supported - SHIP-3071
-    CI_COMMITTER_NAME: ${{ cloudbees.head_commit.author.name }}
-    CI_COMMITTER_USERNAME: ${{ cloudbees.sender.author.username }}
+    CI_COMMITTER_NAME: ${{ cloudbees.event.head_commit.author.name }}
+    CI_COMMITTER_USERNAME: ${{ cloudbees.event.head_commit.author.username }}
     CI_NAME: codeship
     CI_NODE_TOTAL: 1
     CI_PULL_REQUEST: "false"
