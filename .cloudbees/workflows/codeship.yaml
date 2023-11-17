@@ -1,0 +1,254 @@
+apiVersion: automation.cloudbees.io/v1alpha1
+kind: workflow
+name: CodeShip Pro
+"on":
+    push:
+        branches:
+            - '**'
+env:
+    CI: "true"
+    CI_BRANCH: ${{ cloudbees.scm.branch }}
+    CI_BUILD_ID: ${{ cloudbees.run_id }}
+    CI_BUILD_URL: Not currently supported - SHIP-3071
+    CI_COMMITTER_NAME: ${{ cloudbees.head_commit.author.name }}
+    CI_COMMITTER_USERNAME: ${{ cloudbees.sender.author.username }}
+    CI_NAME: codeship
+    CI_NODE_TOTAL: 1
+    CI_PULL_REQUEST: "false"
+    CI_REPO_NAME: ${{ cloudbees.scm.repository}}
+    CODESHIP: "TRUE"
+    RAILSONFIRE: "TRUE"
+permissions:
+    scm-token-org: read
+    scm-token-own: read
+jobs:
+    all-services:
+        needs:
+            - service-deployment
+            - service-deployment-ansible
+            - service-dockercfg-generator
+            - service-dockercfg-test
+        steps:
+            - uses: docker://alpine
+              run: "true"
+    service-deployment:
+        steps:
+            - name: checkout
+              uses: cloudbees-io/checkout@v1
+            - name: Fix permissions
+              uses: docker://alpine
+              run: chown -R root:root /cloudbees/workspace
+            - id: aws-login
+              uses: cloudbees-io/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ vars.app_flotsam_dev_AWS_ACCESS_KEY_ID }}
+                aws-region: us-east-1
+                aws-secret-access-key: ${{ secrets.app_flotsam_dev_AWS_SECRET_ACCESS_KEY }}
+            - uses: cloudbees-io/configure-ecr-credentials@v1
+            - name: Build deployment image using Kaniko
+              uses: cloudbees-io/kaniko@v1
+              with:
+                destination: ${{ steps.aws-login.outputs.aws-account-id }}.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment:latest
+                dockerfile: Dockerfile
+    service-deployment-ansible:
+        steps:
+            - name: checkout
+              uses: cloudbees-io/checkout@v1
+            - name: Fix permissions
+              uses: docker://alpine
+              run: chown -R root:root /cloudbees/workspace
+            - id: aws-login
+              uses: cloudbees-io/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ vars.app_flotsam_dev_AWS_ACCESS_KEY_ID }}
+                aws-region: us-east-1
+                aws-secret-access-key: ${{ secrets.app_flotsam_dev_AWS_SECRET_ACCESS_KEY }}
+            - uses: cloudbees-io/configure-ecr-credentials@v1
+            - name: Build deployment-ansible image using Kaniko
+              uses: cloudbees-io/kaniko@v1
+              with:
+                destination: ${{ steps.aws-login.outputs.aws-account-id }}.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+                dockerfile: Dockerfile.ansible
+    service-dockercfg-generator:
+        steps:
+            - name: checkout
+              uses: cloudbees-io/checkout@v1
+            - name: Fix permissions
+              uses: docker://alpine
+              run: chown -R root:root /cloudbees/workspace
+            - id: aws-login
+              uses: cloudbees-io/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ vars.app_flotsam_dev_AWS_ACCESS_KEY_ID }}
+                aws-region: us-east-1
+                aws-secret-access-key: ${{ secrets.app_flotsam_dev_AWS_SECRET_ACCESS_KEY }}
+            - uses: cloudbees-io/configure-ecr-credentials@v1
+            - name: Build dockercfg-generator image using Kaniko
+              uses: cloudbees-io/kaniko@v1
+              with:
+                destination: ${{ steps.aws-login.outputs.aws-account-id }}.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/dockercfg-generator:latest
+                dockerfile: ./Dockerfile
+    service-dockercfg-test:
+        steps:
+            - name: checkout
+              uses: cloudbees-io/checkout@v1
+            - name: Fix permissions
+              uses: docker://alpine
+              run: chown -R root:root /cloudbees/workspace
+            - id: aws-login
+              uses: cloudbees-io/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ vars.app_flotsam_dev_AWS_ACCESS_KEY_ID }}
+                aws-region: us-east-1
+                aws-secret-access-key: ${{ secrets.app_flotsam_dev_AWS_SECRET_ACCESS_KEY }}
+            - uses: cloudbees-io/configure-ecr-credentials@v1
+            - name: Build dockercfg-test image using Kaniko
+              uses: cloudbees-io/kaniko@v1
+              with:
+                destination: ${{ steps.aws-login.outputs.aws-account-id }}.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/dockercfg-test:latest
+                dockerfile: Dockerfile.test
+    step-deploy-to-docker-hub:
+        needs:
+            - step-test
+        steps:
+            - name: deploy-to-docker-hub
+              uses: docker://alpine
+              run: "true"
+        if: cloudbees.scm.branch == 'master'
+    step-deploy-to-docker-hub-push-deployment:
+        needs:
+            - step-deploy-to-docker-hub
+        steps:
+            - name: deploy-to-docker-hub-push-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment:latest
+    step-deploy-to-docker-hub-push-dockercfg--f508cf:
+        needs:
+            - step-deploy-to-docker-hub-push-deployment
+        steps:
+            - name: deploy-to-docker-hub-push-dockercfg-generator
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/dockercfg-generator:latest
+    step-test:
+        needs:
+            - step-test-app-engine-deployments
+        steps:
+            - name: test
+              uses: docker://alpine
+              run: "true"
+    step-test-app-engine-deployments:
+        needs:
+            - all-services
+        steps:
+            - name: test-app-engine-deployments
+              uses: docker://alpine
+              run: "true"
+    step-test-app-engine-deployments-go-based-18fe78:
+        needs:
+            - step-test-app-engine-deployments-go-based-20f65c
+        steps:
+            - name: test-app-engine-deployments-go-based-deployment-checks-test-go-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c'
+    step-test-app-engine-deployments-go-based-20f65c:
+        needs:
+            - step-test-app-engine-deployments-python-b-20f65c
+        steps:
+            - name: test-app-engine-deployments-go-based-deployment-checks
+              uses: docker://alpine
+              run: "true"
+    step-test-app-engine-deployments-go-based-19039c:
+        needs:
+            - step-test-app-engine-deployments-go-based-18fe78
+        steps:
+            - name: test-app-engine-deployments-go-based-deployment-checks-negative-test-check-url-not-existin
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_GO}" codeship_app_engine_deploy -f /deploy/test-app-engine-go -P codeship-deploy-test-go -c -u http://foo.bar.baz'
+    step-test-app-engine-deployments-negative-6ada4b:
+        needs:
+            - step-test-app-engine-deployments-test-php-18fe78
+        steps:
+            - name: test-app-engine-deployments-negative-test-detects-invalid-json
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c '! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NO_JSON}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
+    step-test-app-engine-deployments-python-b-5ef99f:
+        needs:
+            - step-test-app-engine-deployments-python-b-6d0aae
+        steps:
+            - name: test-app-engine-deployments-python-based-deployment-checks-negative-test-for-a-git-repository-reset-where-we-dont-reset-but-deploy-garbage-which-should-fail-the-url-check
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c 'cd /deploy/test-app-engine-python && echo "foo" > main.py && ! CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
+    step-test-app-engine-deployments-python-b-6d0aae:
+        needs:
+            - step-test-app-engine-deployments-python-b-18fe78
+        steps:
+            - name: test-app-engine-deployments-python-based-deployment-checks-test-that-a-git-repository-can-be-reset-with-c
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c 'cd /deploy/test-app-engine-python && git config --global user.email "you@example.com" && git config --global user.name "Your Name" && git init && git add . && git commit -m "foo" && echo "foo" > main.py && CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c -C'
+    step-test-app-engine-deployments-python-b-18fe78:
+        needs:
+            - step-test-app-engine-deployments-python-b-20f65c
+        steps:
+            - name: test-app-engine-deployments-python-based-deployment-checks-test-python-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PYTHON}" codeship_app_engine_deploy -f /deploy/test-app-engine-python -P codeship-deploy-test-py -c'
+    step-test-app-engine-deployments-python-b-20f65c:
+        needs:
+            - step-test-app-engine-deployments-test-rub-18fe78
+        steps:
+            - name: test-app-engine-deployments-python-based-deployment-checks
+              uses: docker://alpine
+              run: "true"
+    step-test-app-engine-deployments-test-jav-18fe78:
+        needs:
+            - step-test-app-engine-deployments
+        steps:
+            - name: test-app-engine-deployments-test-java-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_JAVA}" codeship_app_engine_deploy -d maven -f /deploy/test-app-engine-java -P codeship-deploy-test-java -c"
+    step-test-app-engine-deployments-test-nod-18fe78:
+        needs:
+            - step-test-app-engine-deployments-negative-6ada4b
+        steps:
+            - name: test-app-engine-deployments-test-node-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_NODE}" codeship_app_engine_deploy -f /deploy/test-app-engine-node -P codeship-deploy-test-node -c"
+    step-test-app-engine-deployments-test-php-18fe78:
+        needs:
+            - step-test-app-engine-deployments-go-based-20f65c
+        steps:
+            - name: test-app-engine-deployments-test-php-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c 'CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_PHP}" codeship_app_engine_deploy -f /deploy/test-app-engine-php -P codeship-deploy-test-php -c'
+    step-test-app-engine-deployments-test-rub-18fe78:
+        needs:
+            - step-test-app-engine-deployments-test-jav-18fe78
+        steps:
+            - name: test-app-engine-deployments-test-ruby-app-engine-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment-ansible:latest
+              run: bash -c "CODESHIP_GOOGLE_APP_ENGINE_KEY_CONTENT="${GOOGLE_KEY_CONTENT_TEST_RUBY}" codeship_app_engine_deploy -f /deploy/test-app-engine-ruby -P codeship-deploy-test-ruby -c"
+    step-test-test-deployment:
+        needs:
+            - step-test
+        steps:
+            - name: test-test-deployment
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/deployment:latest
+              run: /deploy/test/deploy_to_google.sh
+    step-test-test-dockercfg-generator:
+        needs:
+            - step-test-test-deployment
+        steps:
+            - name: test-test-dockercfg-generator
+              uses: docker://alpine
+              run: "true"
+    step-test-test-dockercfg-generator-build:
+        needs:
+            - step-test-test-dockercfg-generator
+        steps:
+            - name: test-test-dockercfg-generator-build
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/dockercfg-generator:latest
+              run: /dev/null
+    step-test-test-dockercfg-generator-test-push:
+        needs:
+            - step-test-test-dockercfg-generator-build
+        steps:
+            - name: test-test-dockercfg-generator-test-push
+              uses: docker://228670973478.dkr.ecr.us-east-1.amazonaws.com/codeship/codeship-library-google-cloud-utilities/dockercfg-test:latest
