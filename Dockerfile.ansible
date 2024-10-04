@@ -10,10 +10,10 @@ RUN \
 
 RUN mkdir /root/bin
 
-COPY tasks /google-cloud/tasks
-COPY vars /google-cloud/vars
+COPY tasks /google_cloud/tasks
+COPY vars /google_cloud/vars
 COPY site.yml site.yml
-COPY deployment /google-cloud/deployment
+COPY deployment /google_cloud/deployment
 
 RUN ansible-playbook -i localhost -c local site.yml
 

@@ -1,49 +1,52 @@
-- name: download gcloud sdk
-  get_url:
-    url: "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
-    dest: "/tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
-  become: True
+---
+- name: Download gcloud sdk
+  ansible.builtin.get_url:
+    url: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz
+    dest: /tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: untar gcloud
-  unarchive:
-    remote_src: True
-    src: "/tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz"
+- name: Untar gcloud
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: /tmp/google-cloud-sdk-{{ gcloud_version }}-linux-x86_64.tar.gz
     dest: "{{ gcloud_home }}"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: install python appengine
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-python -q"
+- name: Install Python App Engine
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-python -q"
   args:
     creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/appcfg.py"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: install go appengine
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-go -q"
+- name: Install Go App Engine
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-go -q"
   args:
     creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/goapp"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: install java appengine
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-java -q"
+- name: Install Java App Engine
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud components install app-engine-java -q"
   args:
     creates: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/google/appengine/tools/java/lib/appengine-tools-api.jar"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: put scripts into place
-  synchronize:
+- name: Put scripts into place
+  ansible.posix.synchronize:
     src: "{{ role_path }}/deployment/scripts/"
     dest: "{{ gcloud_home }}/bin/"
-    use_ssh_args: True
-  become: True
+    use_ssh_args: true
+    owner: false
+    group: false
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: fix file permissions
-  file:
+- name: Fix file permissions
+  ansible.builtin.file:
     dest: "{{ gcloud_home }}/bin/"
     owner: "{{ gcloud_user }}"
-    recurse: yes
+    recurse: true
