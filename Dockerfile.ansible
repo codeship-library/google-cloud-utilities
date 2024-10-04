@@ -21,4 +21,8 @@ RUN ansible-playbook -i localhost -c local site.yml
 ENV PATH="/root/bin:/root/google-cloud-sdk/bin:/root/appengine/python_appengine:/root/appengine/go_appengine:/root/appengine/java_appengine/bin:${PATH}"
 
 # For the Maven deploy tests
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends --no-install-suggests maven openjdk-8-jdk
+RUN \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends --no-install-suggests maven openjdk-11-jdk && \
+  apt-get clean -y && \
+  rm -rf /var/lib/apt/lists/*
