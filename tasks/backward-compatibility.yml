@@ -1,52 +1,53 @@
-- name: create appengine folder for backward compatibility
-  file:
+---
+- name: Create App Engine folder for backward compatibility
+  ansible.builtin.file:
     state: directory
     dest: "{{ gcloud_home }}/appengine"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: backward compatibility links for all appengines
-  file:
+- name: Backward compatibility links for all App Engines
+  ansible.builtin.file:
     state: link
     src: "{{ gcloud_home }}/google-cloud-sdk/platform/google_appengine/"
     dest: "{{ item }}"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
   with_items:
     - "{{ gcloud_home }}/appengine/python_appengine"
     - "{{ gcloud_home }}/appengine/google_appengine"
     - "{{ gcloud_home }}/appengine/go_appengine"
 
-- name: download java appengine
-  get_url:
-    url: "https://storage.googleapis.com/appengine-sdks/featured/appengine-java-sdk-{{ gae_java_version }}.zip"
+- name: Download Java App Engine
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/appengine-sdks/featured/appengine-java-sdk-{{ gae_java_version }}.zip
     dest: /tmp/java_appengine.zip
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: unpack java appengine
-  unarchive:
-    remote_src: True
-    src: "/tmp/java_appengine.zip"
+- name: Unpack Java App Engine
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: /tmp/java_appengine.zip
     dest: "{{ gcloud_home }}/appengine"
     creates: "{{ gcloud_home }}/appengine/appengine-java-sdk-{{ gae_java_version }}"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: link java appengine
-  file:
+- name: Link Java App Engine
+  ansible.builtin.file:
     state: link
     src: "{{ gcloud_home }}/appengine/appengine-java-sdk-{{ gae_java_version }}"
     dest: "{{ gcloud_home }}/appengine/java_appengine"
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"
 
-- name: write appengine configuration
-  blockinfile:
+- name: Write App Engine configuration
+  ansible.builtin.blockinfile:
     dest: "{{ gcloud_home }}/.appcfg_nat"
-    create: True
+    create: true
     block: |
       opt_in: false
       timestamp: 0.0
-  become: True
+  become: true
   become_user: "{{ gcloud_user }}"

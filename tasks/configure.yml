@@ -1,17 +1,18 @@
-- name: check gcloud config
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config list"
-  become: True
+---
+- name: Check gcloud config
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config list"
+  become: true
   become_user: "{{ gcloud_user }}"
   register: gcloud_config
 
-- name: set gcloud disable prompts for non-interactive deployments
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set core/disable_prompts 1"
-  become: True
+- name: Set gcloud disable prompts for non-interactive deployments
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set core/disable_prompts 1"
+  become: true
   become_user: "{{ gcloud_user }}"
   when: '"disable_prompts = 1" not in gcloud_config.stdout'
 
-- name: set gcloud disable update check
-  shell: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set component_manager/disable_update_check true"
-  become: True
+- name: Set gcloud disable update check
+  ansible.builtin.command: "{{ gcloud_home }}/google-cloud-sdk/bin/gcloud config set component_manager/disable_update_check true"
+  become: true
   become_user: "{{ gcloud_user }}"
   when: '"disable_update_check = true" not in gcloud_config.stdout'

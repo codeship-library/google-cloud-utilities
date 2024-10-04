@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
   roles:
-  - role: google-cloud
-    gcloud_user: root
-    gcloud_home: /root
+    - role: google_cloud
+      gcloud_user: root
+      gcloud_home: /root
