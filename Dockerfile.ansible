@@ -1,12 +1,12 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ENV LANG=C.UTF-8
+ENV PATH="/root/bin:/root/.local/bin:/root/google-cloud-sdk/bin:/root/appengine/python_appengine:/root/appengine/go_appengine:/root/appengine/java_appengine/bin:${PATH}"
 
 RUN \
   apt-get update && \
-  apt-get install -y --no-install-recommends python3-setuptools python3-pip apt-transport-https ca-certificates wget rsync unzip jq git && \
-  pip3 install --upgrade pip && \
-  pip3 install ansible==6.7.0
+  apt-get install -y --no-install-recommends pipx python3-setuptools apt-transport-https ca-certificates wget rsync unzip jq git && \
+  pipx install --include-deps ansible==11.2.0
 
 RUN mkdir /root/bin
 
@@ -16,8 +16,6 @@ COPY site.yml site.yml
 COPY deployment /google_cloud/deployment
 
 RUN ansible-playbook -i localhost -c local site.yml
-
-ENV PATH="/root/bin:/root/google-cloud-sdk/bin:/root/appengine/python_appengine:/root/appengine/go_appengine:/root/appengine/java_appengine/bin:${PATH}"
 
 # For the Maven deploy tests
 RUN \
