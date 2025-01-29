@@ -3,7 +3,7 @@ LABEL maintainer='Codeship Inc., <maintainers@codeship.com>'
 
 # Check for the latest version on
 # https://cloud.google.com/sdk/docs/install#linux
-ARG GOOGLE_CLOUD_VERSION="506.0.0"
+ARG GOOGLE_CLOUD_VERSION="508.0.0"
 
 ENV PATH="/google-cloud-sdk/bin:${PATH}"
 
