@@ -6,7 +6,7 @@ ENV PATH="/root/bin:/root/.local/bin:/root/google-cloud-sdk/bin:/root/appengine/
 RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends pipx python3-setuptools apt-transport-https ca-certificates wget rsync unzip jq git && \
-  pipx install --include-deps ansible==11.2.0
+  pipx install --include-deps ansible==11.4.0
 
 RUN mkdir /root/bin
 
