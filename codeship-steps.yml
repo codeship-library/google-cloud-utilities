@@ -52,8 +52,8 @@
         - name: Test Push
           service: dockercfg-test
           type: push
-          image_name: gcr.io/key-airlock-160720/codeship-testing
-          registry: https://gcr.io
+          image_name: us-central1-docker.pkg.dev/key-airlock-160720/codeship-testing/test-image
+          registry: https://us-central1-docker.pkg.dev
           dockercfg_service: dockercfg-generator
 - name: Deploy (to Docker Hub)
   type: serial
