@@ -8,7 +8,7 @@ A Docker image with the `gcloud` CLI installed and ready to deploy to Google Clo
 
 This container allows you to generate a temporary dockercfg using your Google Cloud credentials and write it to a specified filename. Typical usage of this image would be to run it with a volume attached, and write the dockercfg to that volume.
 
-See the [dockercfg-generator ReadMe](dockercfg-generator/README.md) for more details and usage instructions.
+See the [dockercfg-generator README](dockercfg-generator/README.md) for more details and usage instructions.
 
 ## Contributing
 

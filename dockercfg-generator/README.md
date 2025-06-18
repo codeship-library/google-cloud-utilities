@@ -1,6 +1,6 @@
 # gcr-dockerfg-generator
 
-Dockercfg generator for GCR
+Dockercfg generator for GCR / Artifact Registry
 
 This container allows you to generate a temporary dockercfg using your Google API credentials
 and writes it to a specified filename. Typical usage of this image would be to run it 
@@ -8,11 +8,14 @@ with a volume attached, and write the dockercfg to that volume. Note that this g
 works if you have a local Docker host available. Using a remote Docker host (Docker Machine 
 with AWS, etc) will result in an error because the generator writes to your local file system.
 
+Note, [Google deprecated Container Registry](https://cloud.google.com/container-registry/docs/deprecations/container-registry-deprecation) in favor of Artifact Registry. You will need to [migrate to Artifact Registry](https://cloud.google.com/artifact-registry/docs/transition/transition-from-gcr) to continue using this.
+
 ```
 $ cat gcr_creds.env
 GOOGLE_AUTH_EMAIL=gcloud-user@myapp-130450.iam.gserviceaccount.com
 GOOGLE_PROJECT_ID=myapp-130450
 GOOGLE_AUTH_JSON=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+GOOGLE_LOCATION=us-central1
 $ docker run -it -v /home/myuser/data:/opt/data --env-file=gcr_creds.env codeship/gcr-dockercfg-generator /opt/data/gcr.dockercfg
 Logging into Google GCR
 Activated service account credentials for: [gcloud-user@myapp-130450.iam.gserviceaccount.com]
@@ -39,6 +42,7 @@ Codeship supports using custom images to generate dockercfg files during the bui
 * GOOGLE_AUTH_EMAIL - The email associated with the Google API credentials
 * GOOGLE_PROJECT_ID - The ID associated with the project
 * GOOGLE_AUTH_JSON - The API credential JSON file, merged onto a single line
+* GOOGLE_LOCATION - The regional location of the repository where the image is stored
 
 Here is an example of using a GCR Dockercfg generator to authenticate pushing an image.
 
@@ -64,4 +68,3 @@ gcr_dockercfg:
 ```
 
 You can also use this authentication to pull images, or use with caching, by defining the `dockercfg_service` field on groups of steps, or each individual step that pulls or pushes an image, or by adding the field to specific services.
-
