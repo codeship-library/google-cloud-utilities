@@ -20,7 +20,7 @@
 
 - name: Download Java App Engine
   ansible.builtin.get_url:
-    url: https://storage.googleapis.com/appengine-sdks/featured/appengine-java-sdk-{{ gae_java_version }}.zip
+    url: https://repo1.maven.org/maven2/com/google/appengine/appengine-java-sdk/{{ gae_java_version }}/appengine-java-sdk-{{ gae_java_version }}.zip
     dest: /tmp/java_appengine.zip
   become: true
   become_user: "{{ gcloud_user }}"
